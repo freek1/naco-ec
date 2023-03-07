@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+''' Assignment 4.1 '''
+
 f1 = lambda x: np.abs(x)
 f2 = lambda x: x**2
 f3 = lambda x: 2*x**2
