@@ -33,11 +33,14 @@ gens = 1500 # Generations
 mu = 0.01 # Mutation probability
 mu_cross = 0.1 # Crossover probability
 pool = 500 # Size of pool
-fit_scores_plot = np.zeros((gens))
-cs = np.zeros((pool, len(data)))
-prev_best = 0
-fit_tot = np.zeros((runs, gens))
-best_route = []
+fit_scores_plot = np.zeros((gens)) # For plotting runs
+cs = np.zeros((pool, len(data))) # Canidates
+prev_best = 0 
+fit_tot = np.zeros((runs, gens)) # For comptuting mean of fitness over runs
+best_route = [] # Best route per generation
+best_run_nr = 0 # Keeping track which run has highest fitness
+best_route_run = np.zeros((runs, len(data))) # Storing the best route of each run
+prev_fittest = 0 # Keeping track which run has highest fitness
 
 def crossover(p1, p2):
     '''Applies crossover permutation
@@ -156,11 +159,15 @@ for r in range(runs):
         best_route_gen.append(cs[np.argmax(fit_scores)])
 
     # Best route of run
-    best_route = (best_route_gen[-1])
-    print(f'Best route of run: {best_route}')
+    best_route_run[r] = (best_route_gen[-1])
+    if fit_scores_plot[-1] > prev_fittest:
+        prev_fittest = fit_scores_plot[-1]
+        best_run_nr = r
     
     plt.plot(np.arange(gens), fit_scores_plot, '--', label=f'run {r+1}')
     fit_tot[r, :] = fit_scores_plot
+
+print(f'Best route (run {best_run_nr+1}): \n{best_route_run[best_run_nr]}')
 
 plt.plot(np.arange(gens), np.mean(np.array(fit_tot), axis=0), 'k', label='Avg')
 plt.title(f'Simple EA on TSP problem for {runs} runs')
@@ -173,15 +180,15 @@ plt.show()
 
 plt.figure()
 plt.plot(data[:, 0], data[:, 1], 'ro')
-for i in range(len(best_route)-1):
-    point1 = best_route[i]
-    point2 = best_route[i+1]
+for i in range(len(best_route_run[best_run_nr])-1):
+    point1 = best_route_run[best_run_nr][i]
+    point2 = best_route_run[best_run_nr][i+1]
     xp1 = data[int(point1), 0]
     yp1 = data[int(point1), 1]
     xp2 = data[int(point2), 0]
     yp2 = data[int(point2), 1]
     plt.plot([xp1, xp2], [yp1, yp2], 'k-')
-plt.title('TSP graph')
+plt.title(f'TSP graph (run {best_run_nr+1})')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.legend(['Cities', 'Candidate solution'])
