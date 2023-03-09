@@ -14,7 +14,7 @@ def prop_select(x, f, xs):
     Input:
         x, int: individual to be evaluated
         f, function: fitness function
-        a, list: list of all possible values for x
+        xs, list: list of all possible values for x
     Ouput:
         ans, double: probability of selecting individual x using fitness-proportional selection
     '''
