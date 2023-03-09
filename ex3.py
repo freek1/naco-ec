@@ -79,7 +79,7 @@ def crossover(p1, p2):
 
     return c1, c2
 
-plt.figure()
+plt.figure(figsize=(10, 8))
 for r in range(runs):
     # --- Init random candidates
     for p in range(pool):
@@ -90,8 +90,12 @@ for r in range(runs):
     for i, c in enumerate(cs):
         fit_scores[i] = fitness(data, c)
 
+    # Storing best route
+    best_route = []
     for gen in tqdm(range(gens), desc=f'Run {r+1}'):
-                
+        # Storing
+        best_route_gen = []
+
         # --- Selection
         prop_sel = np.zeros((len(cs)))
         for i in range(len(cs)):
@@ -142,17 +146,12 @@ for r in range(runs):
         # Store best fitness score 
         fit_scores_plot[gen] = max(fit_scores)
         
-        
-        # Store best route
-        # best_idx = np.argmax(fit_scores)
-        # print(cs[best_idx])
-        # if max(fit_scores) < prev_best:
-        #     print(f'max(fit_scores): {max(fit_scores)}')
-        #     print(f'notbest_p_idx: {notbest_p_idx}')
-        #     print(f'parents idx: {parents}')
-        #     print(fit_p1, fit_p2)
-        #     print(fit_c1, fit_c2)
-        # prev_best = max(fit_scores)
+        # Store best route of gen
+        best_route_gen.append(cs[np.argmax(fit_scores)])
+
+    # Best route of run
+    best_route.append(best_route_gen[-1])
+    print(f'Best route of run: {best_route_gen[-1]}')
     
     plt.plot(np.arange(gens), fit_scores_plot, '--', label=f'run {r+1}')
     fit_tot[r, :] = fit_scores_plot
