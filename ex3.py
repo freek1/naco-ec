@@ -54,8 +54,8 @@ def crossover(p1, p2):
     c2 = np.ones_like(p2)*-1
 
     # Choose two cut points
-    cut1 = 2 #np.random.randint(1, len(p1)-1)
-    cut2 = 4 #np.random.randint(cut1, len(p1))
+    cut1 = np.random.randint(1, len(p1)-1)
+    cut2 = np.random.randint(cut1, len(p1))
 
     # Keep middle piece
     c1[cut1:cut2] = p1[cut1:cut2]
@@ -101,9 +101,17 @@ for r in range(runs):
         for i in range(len(cs)):
             prop_sel[i] = fit_scores[i]/np.sum(fit_scores)
 
+        # ###
+        # Choosing parents from proportional selection:
+        # ###
         parents = np.random.choice(len(prop_sel), size=2, p=prop_sel)
         while parents[0] == parents[1]:
             parents = np.random.choice(len(prop_sel), size=2, p=prop_sel)
+
+        # ###
+        # Best parents choice: (not sure if it works)
+        # ###
+        # parents = [np.argsort(prop_sel)[-1], np.argsort(prop_sel, axis=0)[-2]]
 
         # --- Recombine and mutate
         # Crossover (mu_cross?????)
