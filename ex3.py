@@ -24,8 +24,6 @@ def fitness(data, c):
     '''
     distance = 0
     for i in range(len(c)-1):
-        # print(i)
-        # print(euclidean(data[int(c[i])], data[int(c[i+1])]))
         distance += euclidean(data[int(c[i])], data[int(c[i+1])])
     return 1/distance
 
@@ -79,7 +77,7 @@ def crossover(p1, p2):
 
     return c1, c2
 
-plt.figure(figsize=(10, 8))
+plt.figure(figsize=(8, 6))
 for r in range(runs):
     # --- Init random candidates
     for p in range(pool):
@@ -158,8 +156,8 @@ for r in range(runs):
         best_route_gen.append(cs[np.argmax(fit_scores)])
 
     # Best route of run
-    best_route.append(best_route_gen[-1])
-    print(f'Best route of run: {best_route_gen[-1]}')
+    best_route = (best_route_gen[-1])
+    print(f'Best route of run: {best_route}')
     
     plt.plot(np.arange(gens), fit_scores_plot, '--', label=f'run {r+1}')
     fit_tot[r, :] = fit_scores_plot
@@ -169,5 +167,24 @@ plt.title(f'Simple EA on TSP problem for {runs} runs')
 plt.ylabel('Fitness score')
 plt.xlabel('Generations')
 plt.legend()
-plt.savefig('imgs/ex3_EA.png')
+if not path.exists('imgs/ex3_ea.png'):
+    plt.savefig('imgs/ex3_ea.png')
+plt.show()
+
+plt.figure()
+plt.plot(data[:, 0], data[:, 1], 'ro')
+for i in range(len(best_route)-1):
+    point1 = best_route[i]
+    point2 = best_route[i+1]
+    xp1 = data[int(point1), 0]
+    yp1 = data[int(point1), 1]
+    xp2 = data[int(point2), 0]
+    yp2 = data[int(point2), 1]
+    plt.plot([xp1, xp2], [yp1, yp2], 'k-')
+plt.title('TSP graph')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.legend(['Cities', 'Candidate solution'])
+if not path.exists('imgs/simple-ea-solution.png'):
+    plt.savefig('imgs/simple-ea-solution.png')
 plt.show()
