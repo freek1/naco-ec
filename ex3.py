@@ -36,28 +36,30 @@ mu = 0.01 # Mutation probability
 mu_cross = 0.1 # Crossover probability
 pool = 50 # Size of pool
 fit_scores_plot = np.zeros((gens)) # For plotting runs
-cs = np.zeros((pool, len(data))) # Canidates
+cs = np.zeros((pool, len(data_bav))) # Canidates
 prev_best = 0 
 fit_tot = np.zeros((runs, gens)) # For comptuting mean of fitness over runs
 best_route = [] # Best route per generation
 best_run_nr = 0 # Keeping track which run has highest fitness
-best_route_run = np.zeros((runs, len(data))) # Storing the best route of each run
+best_route_run = np.zeros((runs, len(data_bav))) # Storing the best route of each run
 prev_fittest = 0 # Keeping track which run has highest fitness
 
-local_search = True
+local_search = False
 
 
 ###############
 # Main function
 ###############
-def GA(local_search, prev_fittest, cs):
+def GA(local_search, prev_fittest, cs, data):
     plt.figure(figsize=(8, 6))
+    
 
     for r in range(runs):
         # --- Init random candidates
         for p in range(pool):
             cs[p] = np.random.permutation(len(data)) # Random candidates
 
+        
         if local_search:
             print('Performing local search...')
             # --- Local search
@@ -147,27 +149,6 @@ def GA(local_search, prev_fittest, cs):
 
             cs = cs_new.copy()
 
-            
-                # # Compute fitness scores of new candidates
-            # fit_p1 = fitness(data, cs[parents[0]])
-            # fit_p2 = fitness(data, cs[parents[1]])
-            # fit_c1 = fitness(data, c1)
-            # fit_c2 = fitness(data, c2)
-            # # Select (not) best parent
-            # ps = [fit_p1, fit_p2]
-            # notbest_p_idx = np.argmin(ps)
-            # # Randomly switch one of the children with the worst parent
-            # if np.random.rand() > 0.5:
-            #     # Switch candidate
-            #     cs[parents[notbest_p_idx]] = c1
-            #     # Replace fitness score of switched candidate
-            #     fit_scores[parents[notbest_p_idx]] = fit_c1
-            # else:
-            #     # Switch candidate
-            #     cs[parents[notbest_p_idx]] = c2
-            #     # Replace fitness score of switched candidate
-            #     fit_scores[parents[notbest_p_idx]] = fit_c2
-
             # Store best fitness score 
             fit_scores_plot[gen] = max(fit_scores)
             
@@ -191,8 +172,8 @@ def GA(local_search, prev_fittest, cs):
     plt.ylabel('Fitness score')
     plt.xlabel('Generations')
     plt.legend()
-    if not path.exists('imgs/ex3_ma.png'):
-        plt.savefig('imgs/ex3_ma.png')
+    if not path.exists('imgs/ex3_ea-bav.png'):
+        plt.savefig('imgs/ex3_ea-bav.png')
     plt.show()
 
     plt.figure()
@@ -205,12 +186,12 @@ def GA(local_search, prev_fittest, cs):
         xp2 = data[int(point2), 0]
         yp2 = data[int(point2), 1]
         plt.plot([xp1, xp2], [yp1, yp2], 'k-')
-    plt.title(f'TSP graph (run {best_run_nr+1})')
+    plt.title(f'TSP graph EA on bav28 (run {best_run_nr+1})')
     plt.xlabel('x')
     plt.ylabel('y')
     plt.legend(['Cities', 'Candidate solution'])  
-    if not path.exists('imgs/simple-ma-solution.png'):
-        plt.savefig('imgs/simple-ma-solution.png')
+    if not path.exists('imgs/simple-ea-solution-bav.png'):
+        plt.savefig('imgs/simple-ea-solution-bav.png')
     plt.show()
 
 
@@ -261,7 +242,7 @@ def crossover(p1, p2):
     return c1, c2
 
 def run2Opt(data, c):
-    n_cities = len(data)
+    n_cities = len(c)
     best_neighbour = c
     foundImprovement = True
     while foundImprovement:
@@ -276,11 +257,12 @@ def run2Opt(data, c):
                     foundImprovement = True       
     return best_neighbour
 
+
 def swap2Opt(c, i, j, n_cities):
-    begin = c[0:i]
-    middle = list(reversed(c[i:j+1]))
-    end = c[j+1:n_cities]
-    c_new = np.concatenate((begin, middle, end))
+    # begin = c[0:i]
+    # middle = list(reversed(c[i:j+1]))
+    # end = c[j+1:n_cities]
+    c_new = np.concatenate((c[0:i], list(reversed(c[i:j+1])), c[j+1:n_cities]))
     return c_new
 
-GA(local_search, prev_fittest, cs)
+GA(local_search, prev_fittest, cs, data_bav)
