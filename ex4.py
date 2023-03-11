@@ -124,9 +124,3 @@ def GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_coss):
 n_runs = 5
 avg = GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_cross)
 print(avg)
-#print(f"number of generations until finding of target string: {gen}")
-plt.plot(np.arange(gens), fittest)
-plt.xlabel('Generations')
-plt.ylabel('Fitness')
-plt.title('String search GA')
-plt.show()
