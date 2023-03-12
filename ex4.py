@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os import path
 from tqdm import tqdm
+from scipy.stats import norm
 
 ''' Assignment 4.4: Exploitation vs exploration '''
 
@@ -114,13 +115,27 @@ def GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_coss):
             
             population = new_population
 
-        plt.plot(np.arange(gen+1), fittest, '--', label=f'run {run+1}')
+        plt.plot(np.arange(gen+1), fittest, '--')
     plt.xlabel('Generations')
     plt.ylabel('Fitness')
     plt.title('String search GA')
-    plt.show()
-    return np.mean(avg_runs_duration)
+    return np.mean(avg_runs_duration), np.std(avg_runs_duration)
 
-n_runs = 5
-avg = GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_cross)
-print(avg)
+n_runs = 20
+mu=0.1
+gens=200
+avg, std = GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_cross)
+
+plt.axvline(x=avg, c='k', label='Average $t_{finish}$')
+plt.legend()
+plt.savefig('imgs/ex4-3.png')
+plt.show()
+
+# x_axis = np.arange(avg-3*std, avg+3*std, 0.001)
+# plt.figure()
+# plt.plot(x_axis, norm.pdf(x_axis, avg, std))
+# plt.title('Distribution of $t_{finish}$ after 20 runs')
+# plt.xlabel('$t_{finish}$')
+# plt.ylabel('pdf')
+# plt.savefig('imgs/ex4-2-dist.png')
+# plt.show()
