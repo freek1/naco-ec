@@ -114,22 +114,37 @@ def GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_coss):
                 new_population.append(c2)
             
             population = new_population
-
-        plt.plot(np.arange(gen+1), fittest, '--')
-    plt.xlabel('Generations')
-    plt.ylabel('Fitness')
-    plt.title('String search GA')
-    return np.mean(avg_runs_duration), np.std(avg_runs_duration)
+    # ex: 1,2,3
+        # plt.plot(np.arange(gen+1), fittest, '--')
+    # plt.xlabel('Generations')
+    # plt.ylabel('Fitness')
+    # plt.title('String search GA')
+    return avg_runs_duration, np.mean(avg_runs_duration), np.std(avg_runs_duration)
 
 n_runs = 20
 mu=0.1
 gens=200
-avg, std = GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_cross)
+mus = np.arange(0, 1.1, 0.1)
+K=2
+# ex: 4, 5
+plt.figure()
+results=[]
+for i, mu in enumerate(mus):
+    result, avg, std = GA(alphabet, K, mu, goal_string, gens, n_runs, N, l, p_cross)
+    results.append(result)
 
-plt.axvline(x=avg, c='k', label='Average $t_{finish}$')
-plt.legend()
-plt.savefig('imgs/ex4-3.png')
+plt.boxplot(results, meanline=[True]*len(results))
+plt.xticks(np.arange(len(mus))+1, ['{:.1f}'.format(mu) for mu in mus])
+plt.xlabel('$\mu$')
+plt.ylabel('$t_{finish}$ (generations)')
+plt.title('Relationship between $\mu$ and $t_{finish}$')
 plt.show()
+
+# ex: 1,2,3
+# plt.axvline(x=avg, c='k', label='Average $t_{finish}$')
+# plt.legend()
+# plt.savefig('imgs/ex4-3.png')
+# plt.show()
 
 # x_axis = np.arange(avg-3*std, avg+3*std, 0.001)
 # plt.figure()
