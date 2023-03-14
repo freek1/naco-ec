@@ -10,18 +10,18 @@ import time
 with open('data/file-tsp.txt', 'r') as f:
     lines = f.readlines()
 lines = np.array(list(map(lambda x: x.strip(), lines)))
-data = np.zeros([len(lines), 2])
+given = np.zeros([len(lines), 2])
 for i, x in enumerate(lines):
-    data[i, :] = x.split()
+    given[i, :] = x.split()
 
 # Load bav28.txt
 with open('data/bav28.txt', 'r') as f:
     lines = f.readlines()
 
 lines = np.array(list(map(lambda x: x.strip(), lines)))
-data_bav = np.zeros([len(lines), 2])
+Bays29 = np.zeros([len(lines), 2])
 for i, x in enumerate(lines):
-    data_bav[i, :] = x.split()
+    Bays29[i, :] = x.split()
 
 # data: [x_i, y_i] coordinates for each city i = 1...50
 
@@ -31,30 +31,32 @@ for i, x in enumerate(lines):
 ########
 runs = 10
 
-gens = 1500 # Generations
+gens = 100 # Generations
 mu = 0.01 # Mutation probability
 mu_cross = 0.1 # Crossover probability
-pool = 50 # Size of pool
+pool = 25 # Size of pool
 fit_scores_plot = np.zeros((gens)) # For plotting runs
-cs = np.zeros((pool, len(data_bav))) # Canidates
+
 prev_best = 0 
 fit_tot = np.zeros((runs, gens)) # For comptuting mean of fitness over runs
 best_route = [] # Best route per generation
 best_run_nr = 0 # Keeping track which run has highest fitness
-best_route_run = np.zeros((runs, len(data_bav))) # Storing the best route of each run
+best_route_run = np.zeros((runs, len(given))) # Storing the best route of each run
 prev_fittest = 0 # Keeping track which run has highest fitness
 
-local_search = False
+local_search = True
 
 
 ###############
 # Main function
 ###############
-def GA(local_search, prev_fittest, cs, data):
+def GA(local_search, prev_fittest, data, name):
     plt.figure(figsize=(8, 6))
-    
 
     for r in range(runs):
+        # Canidates
+        cs = np.zeros((pool, len(data)))
+
         # --- Init random candidates
         for p in range(pool):
             cs[p] = np.random.permutation(len(data)) # Random candidates
@@ -168,12 +170,12 @@ def GA(local_search, prev_fittest, cs, data):
 
 
     plt.plot(np.arange(gens), np.mean(np.array(fit_tot), axis=0), 'k', label='Avg')
-    plt.title(f'Simple EA on TSP problem for {runs} runs')
+    plt.title(f'Simple MA on TSP problem for {runs} runs')
     plt.ylabel('Fitness score')
     plt.xlabel('Generations')
+    plt.ylim(0.0005, 0.0089)
     plt.legend()
-    if not path.exists('imgs/ex3_ea-bav.png'):
-        plt.savefig('imgs/ex3_ea-bav.png')
+    plt.savefig(f'imgs/ex3_ma-{name}.png')
     plt.show()
 
     plt.figure()
@@ -186,12 +188,12 @@ def GA(local_search, prev_fittest, cs, data):
         xp2 = data[int(point2), 0]
         yp2 = data[int(point2), 1]
         plt.plot([xp1, xp2], [yp1, yp2], 'k-')
-    plt.title(f'TSP graph EA on bav28 (run {best_run_nr+1})')
+    plt.title(f'TSP graph MA on {name} dataset (run {best_run_nr+1})')
     plt.xlabel('x')
     plt.ylabel('y')
     plt.legend(['Cities', 'Candidate solution'])  
-    if not path.exists('imgs/simple-ea-solution-bav.png'):
-        plt.savefig('imgs/simple-ea-solution-bav.png')
+    #if not path.exists('imgs/simple-ea-solution-bav.png'):
+    plt.savefig(f'imgs/simple-ma-solution-{name}.png')
     plt.show()
 
 
@@ -265,4 +267,5 @@ def swap2Opt(c, i, j, n_cities):
     c_new = np.concatenate((c[0:i], list(reversed(c[i:j+1])), c[j+1:n_cities]))
     return c_new
 
-GA(local_search, prev_fittest, cs, data_bav)
+GA(local_search, prev_fittest, given, "given")
+#GA(local_search, prev_fittest, given)
